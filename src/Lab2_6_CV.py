@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def cross_validation(model, X, y, nFolds):
     """
     Perform cross-validation on a given machine learning model to evaluate its performance.
@@ -44,26 +47,30 @@ def cross_validation(model, X, y, nFolds):
         # Implement Leave One Out CV
         nFolds = X.shape[0]
 
-    # TODO: Calculate fold_size based on the number of folds
-    fold_size = None
+    # Calculate fold_size based on the number of folds
+    fold_size = X.shape[0] // nFolds
 
-    # TODO: Initialize a list to store the accuracy values of the model for each fold
-    accuracy_scores = []
+    # Initialize a list to store the accuracy values of the model for each fold
+    accuracy_scores = [0 for i in range(nFolds)]
 
     for i in range(nFolds):
-        # TODO: Generate indices of samples for the validation set for the fold
-        valid_indices = None
+        # Generate indices of samples for the validation set for the fold
+        valid_indices = [j + fold_size * i for j in range(fold_size)]
 
-        # TODO: Generate indices of samples for the training set for the fold
-        train_indices = None
+        # Generate indices of samples for the training set for the fold
+        train_indices = [j for j in range(X.shape[0]) if j not in valid_indices]
 
-        # TODO: Split the dataset into training and validation
-        X_train, X_valid = None, None
-        y_train, y_valid = None, None
+        # Split the dataset into training and validation
+        X_train, X_valid = [X[j] for j in train_indices], [X[j] for j in valid_indices]
+        y_train, y_valid = [y[j] for j in train_indices], [y[j] for j in valid_indices]
 
-        # TODO: Train the model with the training set
+        # Train the model with the training set
+        model.fit(X_train, y_train)
 
-        # TODO: Calculate the accuracy of the model with the validation set and store it in accuracy_scores
+        # Calculate the accuracy of the model with the validation set and store it in accuracy_scores
+        y_pred = model.predict(X_valid)
+        true = sum(np.array(y_valid) == np.array(y_pred))
+        accuracy_scores[i] = true / len(y_pred)
 
-    # TODO: Return the mean and standard deviation of the accuracy_scores
-    return None, None
+    # Return the mean and standard deviation of the accuracy_scores
+    return np.mean(accuracy_scores), np.std(accuracy_scores)

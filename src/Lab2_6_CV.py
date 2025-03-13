@@ -68,9 +68,7 @@ def cross_validation(model, X, y, nFolds):
         model.fit(X_train, y_train)
 
         # Calculate the accuracy of the model with the validation set and store it in accuracy_scores
-        y_pred = model.predict(X_valid)
-        true = sum(np.array(y_valid) == np.array(y_pred))
-        accuracy_scores[i] = true / len(y_pred)
+        accuracy_scores[i] = model.score(X_valid, y_valid)
 
     # Return the mean and standard deviation of the accuracy_scores
     return np.mean(accuracy_scores), np.std(accuracy_scores)
